@@ -9,122 +9,67 @@ pipeline {
             JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
         }
 
-
         stages {
             stage("Tools initialization") {
-                steps {
-                    script {
-                        sh "mvn --version"
-                        sh "java -version"
-                    }
+                script {
+                    sh "mvn --version"
                 }
             }
 
             stage('Checkout') {
-                steps {
-                    script {
-                        checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git"]]])
-                    }
+                script {
+                    checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git"]]])
                 }
             }
 
-            stage("Run Test cases") {
-                when {
-                    expression { env.BRANCH_NAME == 'develop' }
-                }
-                steps {
-                    stage('Maven Build App') {
-                        steps {
-                            dir(BUILD_PATH) {
-                                sh "mvn clean package"
-                            }
-                        }
-                    }
-
-                    stage('Sonar Security Scan') {
-                        steps {
-                            dir(BUILD_PATH) {
-                                sh 'echo "Sonar Scan"'
-                            }
-                        }
-                    }
-
-                    stage('Docker Build and Tag') {
-                        steps {
-                            script {
-                                sh 'echo "Docker build and tag"'
-                            }
-                        }
-                    }
-
-                    stage('Docker Scan') {
-                        steps {
-                            script {
-                                sh 'echo "Docker scan"'
-                            }
-                        }
-                    }
-
-                    stage('Docker Push') {
-                        steps {
-                            script {
-                                sh 'echo "docker push"'
-                            }
-                        }
-                    }
-
-                    stage("Deploy Image to Dev") {
-                        steps {
-                            sh 'echo "deploying to dev"'
-                        }
-                    }
-
-                    stage("Test App in Dev") {
-                        steps {
-                            sh 'echo "test me"'
-                        }
-                    }
-
-                    stage("Check Code coverage") {
-                        when {
-                            expression { env.BRANCH_NAME == 'develop' }
-                        }
-                        steps {
-                             sh 'echo "testing"'
-                        }
-                    }
-
-                    stage("Build & Deploy Code") {
-                        when {
-                            expression { env.BRANCH_NAME == 'master' }
-                        }
-                        steps {
-                            sh "echo 'deploy to prod'"
-                        }
-                    }
+            stage('Sonar Security Scan') {
+                script {
+                    echo "Sonar Scan"
+                    // Add SonarQube scanning steps here
                 }
             }
 
-            stage('Docker image Clean') {
-                steps {
-                    script {
-                        try {
-                            sh 'echo "remove images"'
-                        } catch (Exception e) {
-                            echo 'No dangling images found.'
-                        }
-                    }
+            stage('Docker Build and Tag') {
+                script {
+                    echo "Docker build and tag"
+                    // Add Docker build and tagging steps here
+                }
+            }
+
+            stage('Docker Scan') {
+                script {
+                    echo "Docker scan"
+                    // Add Docker scanning steps here
+                }
+            }
+
+            stage('Docker Push') {
+                script {
+                    echo "Docker push"
+                    // Add Docker push steps here
+                }
+            }
+
+            stage("Deploy Image to Dev") {
+                script {
+                    echo "Deploying to dev"
+                    // Add deployment steps here
+                }
+            }
+
+            stage("Test App in Dev") {
+                script {
+                    echo "Test me"
+                    // Add testing steps here
                 }
             }
 
             stage('Announce') {
-                steps {
-                    script {
-                        if (currentBuild.resultIsBetterOrEqualTo('SUCCESS')) {
-                            echo "Build successful!"
-                        } else {
-                            error "Build failed!"
-                        }
+                script {
+                    if (currentBuild.resultIsBetterOrEqualTo('SUCCESS')) {
+                        echo "Build successful!"
+                    } else {
+                        error "Build failed!"
                     }
                 }
             }
