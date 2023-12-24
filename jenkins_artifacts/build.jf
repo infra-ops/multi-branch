@@ -3,7 +3,7 @@ pipeline {
     
         environment {
             git_url = "git@github.com:infra-ops/multi-branch.git"
-            git_branch = "master"
+            git_branch = "main"
             sshKey = credentials('github_key') // Replace with your SSH key credentials ID
             BUILD_PATH = "${WORKSPACE}/multi-branch"
             JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
