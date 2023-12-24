@@ -1,70 +1,87 @@
 pipeline {
-    node('ec2') {
+    agent { label 'ec2' }
 
-        environment {
-            git_url = "git@github.com:infra-ops/multi-branch.git"
-            git_branch = "main"
-            sshKey = credentials('github_key') // Replace with your SSH key credentials ID
-            BUILD_PATH = "${WORKSPACE}/multi-branch"
-            JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
-        }
+    environment {
+        git_url = "git@github.com:infra-ops/multi-branch.git"
+        git_branch = "main"
+        sshKey = credentials('github_key') // Replace with your SSH key credentials ID
+        BUILD_PATH = "${WORKSPACE}/multi-branch"
+        JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
+    }
 
-        stages {
-            stage("Tools initialization") {
+    stages {
+        stage("Tools initialization") {
+            steps {
                 script {
                     sh "mvn --version"
                 }
             }
+        }
 
-            stage('Checkout') {
+        stage('Checkout') {
+            steps {
                 script {
                     checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git"]]])
                 }
             }
+        }
 
-            stage('Sonar Security Scan') {
+        stage('Sonar Security Scan') {
+            steps {
                 script {
                     echo "Sonar Scan"
                     // Add SonarQube scanning steps here
                 }
             }
+        }
 
-            stage('Docker Build and Tag') {
+        stage('Docker Build and Tag') {
+            steps {
                 script {
                     echo "Docker build and tag"
                     // Add Docker build and tagging steps here
                 }
             }
+        }
 
-            stage('Docker Scan') {
+        stage('Docker Scan') {
+            steps {
                 script {
                     echo "Docker scan"
                     // Add Docker scanning steps here
                 }
             }
+        }
 
-            stage('Docker Push') {
+        stage('Docker Push') {
+            steps {
                 script {
                     echo "Docker push"
                     // Add Docker push steps here
                 }
             }
+        }
 
-            stage("Deploy Image to Dev") {
+        stage("Deploy Image to Dev") {
+            steps {
                 script {
                     echo "Deploying to dev"
                     // Add deployment steps here
                 }
             }
+        }
 
-            stage("Test App in Dev") {
+        stage("Test App in Dev") {
+            steps {
                 script {
                     echo "Test me"
                     // Add testing steps here
                 }
             }
+        }
 
-            stage('Announce') {
+        stage('Announce') {
+            steps {
                 script {
                     if (currentBuild.resultIsBetterOrEqualTo('SUCCESS')) {
                         echo "Build successful!"
