@@ -1,6 +1,6 @@
 pipeline {
     node('ec2') {
-    
+
         environment {
             git_url = "git@github.com:infra-ops/multi-branch.git"
             git_branch = "main"
@@ -26,7 +26,7 @@ pipeline {
             stage('Checkout') {
                 steps {
                     script {
-                        checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git" ]]])
+                        checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git"]]])
                     }
                 }
             }
