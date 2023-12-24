@@ -9,9 +9,6 @@ pipeline {
             JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
         }
 
-        triggers {
-            pollSCM('H/2 * * * *')
-        }
 
         stages {
             stage("Tools initialization") {
