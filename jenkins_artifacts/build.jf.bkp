@@ -47,8 +47,8 @@ pipeline {
                 stage('Sonar Security Scan') {
                     steps {
                         dir(BUILD_PATH) {
-                            sh 'echo "Sonar Scan"'
-                            
+                            sh 'mvn install sonar:sonar -Dsonar.token=sqp_c7e87a0f6be4bbe7c40f2bb7cbc88857671d6a0b'
+                            //sh "mvn sonar:sonar -Dsonar.host.url=http://${JENKINS_IP}:9000"
                         }
                     }
                 }
@@ -56,8 +56,8 @@ pipeline {
                 stage('Docker Build and Tag') {
                     steps {
                         script {
-                            sh 'echo "Docker build and tag"'
-                           
+                            sh 'docker build -t test-application:1.0.0 -f ${WORKSPACE}/Dockerfile .'
+                            sh 'docker tag test-application:1.0.0 registry/microservices/test-application:1.0.0'
                         }
                     }
                 }
@@ -65,7 +65,7 @@ pipeline {
                 stage('Docker Scan') {
                     steps {
                         script {
-                            sh 'echo "Docker scan"'
+                            sh 'trivy image'
                         }
                     }
                 }
@@ -73,7 +73,8 @@ pipeline {
                 stage('Docker Push') {
                     steps {
                         script {
-                            sh 'echo "docker push"'
+                            sh 'docker login --username=username --password=password registry'
+                            sh 'docker push registry/microservices/test-application:1.0.0'
                         }
                     }
                 }
@@ -114,8 +115,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        //sh 'docker rmi -f $(docker images -q -f dangling=true)'
-                        sh 'echo "remove images"
+                        sh 'docker rmi -f $(docker images -q -f dangling=true)'
                     } catch (Exception e) {
                         echo 'No dangling images found. '
                     }
