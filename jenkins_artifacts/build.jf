@@ -1,135 +1,133 @@
 pipeline {
-    node ('ec2') {
+    node('ec2') {
     
-    environment {
-        git_url = "git@github.com:infra-ops/multi-branch.git"
-        git_branch = "master"
-        sshKey = credentials('github_key') // Replace with your SSH key credentials ID
-        BUILD_PATH = "${WORKSPACE}/multi-branch"
-        JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
-    }
-
-    triggers {
-        pollSCM('H/2 * * * *')
-    }
-
-    stages {
-        stage("Tools initialization") {
-            steps {
-                script {
-                    sh "mvn --version"
-                    sh "java -version"
-                }
-            }
+        environment {
+            git_url = "git@github.com:infra-ops/multi-branch.git"
+            git_branch = "master"
+            sshKey = credentials('github_key') // Replace with your SSH key credentials ID
+            BUILD_PATH = "${WORKSPACE}/multi-branch"
+            JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
         }
 
-        stage('Checkout') {
-            steps {
-                script {
-                    checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "${git_url}"]]])
-                }
-            }
+        triggers {
+            pollSCM('H/2 * * * *')
         }
 
-        stage("Run Test cases") {
-            when {
-                expression { BRANCH_NAME == 'develop' }
-            }
-            steps {
-                stage('Maven Build App') {
-                    steps {
-                        dir(BUILD_PATH) {
-                            sh "mvn clean package"
-                        }
-                    }
-                }
-
-                stage('Sonar Security Scan') {
-                    steps {
-                        dir(BUILD_PATH) {
-                            sh 'echo "Sonar Scan"'
-                            
-                        }
-                    }
-                }
-
-                stage('Docker Build and Tag') {
-                    steps {
-                        script {
-                            sh 'echo "Docker build and tag"'
-                           
-                        }
-                    }
-                }
-
-                stage('Docker Scan') {
-                    steps {
-                        script {
-                            sh 'echo "Docker scan"'
-                        }
-                    }
-                }
-
-                stage('Docker Push') {
-                    steps {
-                        script {
-                            sh 'echo "docker push"'
-                        }
-                    }
-                }
-
-                stage("Deploy Image to Dev") {
-                    steps {
-                        sh "deploying to dev"
-                    }
-                }
-
-                stage("Test App in Dev") {
-                    steps {
-                        sh 'test me'
-                    }
-                }
-
-                stage("Check Code coverage") {
-                    when {
-                        expression { BRANCH_NAME == 'develop' }
-                    }
-                    steps {
-                         sh 'testing'
-                    }
-                }
-
-                stage("Build & Deploy Code") {
-                    when {
-                        expression { BRANCH_NAME == 'master' }
-                    }
-                    steps {
-                        sh "deploy to prod"
+        stages {
+            stage("Tools initialization") {
+                steps {
+                    script {
+                        sh "mvn --version"
+                        sh "java -version"
                     }
                 }
             }
-        }
 
-        stage('Docker image Clean') {
-            steps {
-                script {
-                    try {
-                        //sh 'docker rmi -f $(docker images -q -f dangling=true)'
-                        sh 'echo "remove images"
-                    } catch (Exception e) {
-                        echo 'No dangling images found. '
+            stage('Checkout') {
+                steps {
+                    script {
+                        checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git" ]]])
                     }
                 }
             }
-        }
 
-        stage('Announce') {
-            steps {
-                script {
-                    if (currentBuild.resultIsBetterOrEqualTo('SUCCESS')) {
-                        echo "Build successful!"
-                    } else {
-                        error "Build failed!"
+            stage("Run Test cases") {
+                when {
+                    expression { env.BRANCH_NAME == 'develop' }
+                }
+                steps {
+                    stage('Maven Build App') {
+                        steps {
+                            dir(BUILD_PATH) {
+                                sh "mvn clean package"
+                            }
+                        }
+                    }
+
+                    stage('Sonar Security Scan') {
+                        steps {
+                            dir(BUILD_PATH) {
+                                sh 'echo "Sonar Scan"'
+                            }
+                        }
+                    }
+
+                    stage('Docker Build and Tag') {
+                        steps {
+                            script {
+                                sh 'echo "Docker build and tag"'
+                            }
+                        }
+                    }
+
+                    stage('Docker Scan') {
+                        steps {
+                            script {
+                                sh 'echo "Docker scan"'
+                            }
+                        }
+                    }
+
+                    stage('Docker Push') {
+                        steps {
+                            script {
+                                sh 'echo "docker push"'
+                            }
+                        }
+                    }
+
+                    stage("Deploy Image to Dev") {
+                        steps {
+                            sh 'echo "deploying to dev"'
+                        }
+                    }
+
+                    stage("Test App in Dev") {
+                        steps {
+                            sh 'echo "test me"'
+                        }
+                    }
+
+                    stage("Check Code coverage") {
+                        when {
+                            expression { env.BRANCH_NAME == 'develop' }
+                        }
+                        steps {
+                             sh 'echo "testing"'
+                        }
+                    }
+
+                    stage("Build & Deploy Code") {
+                        when {
+                            expression { env.BRANCH_NAME == 'master' }
+                        }
+                        steps {
+                            sh "echo 'deploy to prod'"
+                        }
+                    }
+                }
+            }
+
+            stage('Docker image Clean') {
+                steps {
+                    script {
+                        try {
+                            sh 'echo "remove images"'
+                        } catch (Exception e) {
+                            echo 'No dangling images found.'
+                        }
+                    }
+                }
+            }
+
+            stage('Announce') {
+                steps {
+                    script {
+                        if (currentBuild.resultIsBetterOrEqualTo('SUCCESS')) {
+                            echo "Build successful!"
+                        } else {
+                            error "Build failed!"
+                        }
                     }
                 }
             }
