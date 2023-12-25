@@ -45,6 +45,7 @@ docker run --rm --link sonarqube \
 sonarsource/sonar-scanner-cli
 
 
+docker-compose -f sonar-scanner.yml up
 
 
 
