@@ -25,7 +25,7 @@ pipeline {
                 dir(BUILD_PATH) {
                     script {
                         sh 'ls $BUILD_PATH'
-                        #sh 'mvn clean package'
+                        //sh 'mvn clean package'
                         
                     }
                 }
