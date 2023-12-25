@@ -5,33 +5,28 @@ pipeline {
         git_url = "git@github.com:infra-ops/multi-branch.git"
         git_branch = "develop"
         sshKey = credentials('github_key') // Replace with your SSH key credentials ID
-        BUILD_PATH = "${WORKSPACE}/multi_branch_demo_01_develop"
+        BUILD_PATH = "${WORKSPACE}/multi_branch_demo_01_develop/properties"
         JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
     }
 
-    
-
+    stages {
         stage('Checkout') {
             steps {
-              
                 script {
                     checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git"]]])
                 }
             }
         }
 
-       stage('Maven Build App') {
+        stage('Maven Build App') {
             steps {
-                dir(BUILD_PATH)
-                script {
-                    echo "mvn clean package"
-                  
+                dir(BUILD_PATH) {
+                    script {
+                        echo "mvn clean package"
+                    }
                 }
             }
         }
-
-
-
 
         stage('Sonar Security Scan') {
             steps {
