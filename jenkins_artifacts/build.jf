@@ -13,6 +13,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+              
                 script {
                     checkout([$class: 'GitSCM', branches: [[name: "${git_branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github_key', url: "git@github.com:infra-ops/multi-branch.git"]]])
                 }
@@ -21,6 +22,7 @@ pipeline {
 
        stage('Maven Build App') {
             steps {
+                dir(BUILD_PATH)
                 script {
                     echo "mvn clean package"
                   
