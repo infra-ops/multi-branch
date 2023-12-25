@@ -5,18 +5,11 @@ pipeline {
         git_url = "git@github.com:infra-ops/multi-branch.git"
         git_branch = "develop"
         sshKey = credentials('github_key') // Replace with your SSH key credentials ID
-        BUILD_PATH = "${WORKSPACE}/multi-branch"
+        BUILD_PATH = "${WORKSPACE}/multi_branch_demo_01_develop"
         JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
     }
 
-    stages {
-        stage("Tools initialization") {
-            steps {
-                script {
-                    sh "mvn --version"
-                }
-            }
-        }
+    
 
         stage('Checkout') {
             steps {
@@ -25,6 +18,18 @@ pipeline {
                 }
             }
         }
+
+       stage('Maven Build App') {
+            steps {
+                script {
+                    echo "mvn clean package"
+                  
+                }
+            }
+        }
+
+
+
 
         stage('Sonar Security Scan') {
             steps {
