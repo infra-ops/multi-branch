@@ -19,6 +19,7 @@ then execute below memtioned command
 mvn clean package -f pom.xml
 mvn install sonar:sonar -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d -f pom.xml
 
+cd $WORKSPACE/properties && mvn clean package -f pom.xml && mvn install sonar:sonar -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d -f pom.xml
 
 
 node {
