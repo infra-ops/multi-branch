@@ -6,10 +6,10 @@
 
      <modelVersion>4.0.0</modelVersion>
 	<groupId>com.mycompany</groupId>
-	<artifactId>sample_test_01</artifactId>
+	<artifactId>test_02</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>sample_test_01</name>
+	<name>test_02</name>
 	<properties>
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -94,8 +94,8 @@
 		                <activeByDefault>true</activeByDefault>
 		            </activation>
 			    <properties>
-				<sonar.projectName>sample_test_01</sonar.projectName>    
-				<sonar.projectKey>sample_test_01</sonar.projectKey>    
+				<sonar.projectName>test_02</sonar.projectName>    
+				<sonar.projectKey>test_02</sonar.projectKey>    
 		                <!-- Optional URL to server. Default value is http://localhost:9000 -->
 		                <sonar.host.url>http://localhost:9000</sonar.host.url>
 				<sonar.jacoco.reportPath>target/site/jacoco/test.exec</sonar.jacoco.reportPath>
@@ -158,3 +158,4 @@
 
 
 </project>
+

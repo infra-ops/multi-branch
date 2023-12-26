@@ -16,7 +16,8 @@ then execute below memtioned command
 /var/opt/sonar/bin/sonar-scanner   -Dsonar.projectKey=test_02   -Dsonar.sources=.   -Dsonar.host.url=http://localhost:9000   -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d
 
 
-
+mvn clean package -f pom.xml
+mvn install sonar:sonar -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d -f pom.xml
 
 
 
