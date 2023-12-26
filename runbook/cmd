@@ -114,3 +114,9 @@ git@github.com:nik786/hello-tomcat-project-2.git
 curl -u admin:**** -s --request GET --url  "http://localhost:9000/api/qualitygates/project_status?projectKey=sample_test_01" 
 
 
+
+docker run --rm --link sonarqube \
+-e SONAR_HOST_URL="http://sonarqube:9000" \
+-e SONAR_LOGIN="d32ede54513ec7b92589139aaaa5781c121a9303" \
+-v "${YOUR_REPO}:/usr/src" \
+sonarsource/sonar-scanner-cli
