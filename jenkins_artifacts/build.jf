@@ -7,6 +7,12 @@ pipeline {
         sshKey = credentials('github_key') // Replace with your SSH key credentials ID
         BUILD_PATH = "${WORKSPACE}/properties"
         JENKINS_IP = "your_jenkins_ip" // Replace with your Jenkins IP
+        ecr_user = "nik786"
+        ecr_repo = "nik786/blue-flask"
+        deployment_name = "blue-app"
+        container_name = "simple-app"
+        playbooks_path = "${WORKSPACE}/cloud_k8s_platform/on_prem/app_build_deployment/playbooks"
+        py_docker_files = "${WORKSPACE}/cloud_k8s_platform/on_prem/app_build_deployment/app_build/python"
 
      
     }
@@ -34,9 +40,15 @@ pipeline {
 
         stage('Sonar Security Scan') {
             steps {
+              dir(BUILD_PATH) { 
                 script {
                     echo "Sonar Scan"
                     // Add SonarQube scanning steps here
+
+                    // mvn install sonar:sonar -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d -f pom.xml
+                   
+                 }
+                    
                 }
             }
         }
@@ -46,6 +58,7 @@ pipeline {
                 script {
                     echo "Docker build and tag"
                     // Add Docker build and tagging steps here
+                    //sh "docker build -t ${ecr_repo}:${env.BUILD_NUMBER} --pull=true --file=${py_docker_files}/appdockerfile ${py_docker_files}"
                 }
             }
         }
@@ -64,6 +77,8 @@ pipeline {
                 script {
                     echo "Docker push"
                     // Add Docker push steps here
+                    //sh "docker push ${ecr_repo}:${env.BUILD_NUMBER}"
+                     
                 }
             }
         }
