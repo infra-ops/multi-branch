@@ -1,1 +1,114 @@
 ./ngrok http 8080
+
+docker-compose -f sonar-scanner.yml up 
+
+sonar-scanner \
+  -Dsonar.projectKey=test_02 \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d
+
+
+need to login sonar ui
+then need to create test project manually
+then execute below memtioned command
+
+/var/opt/sonar/bin/sonar-scanner   -Dsonar.projectKey=test_02   -Dsonar.sources=.   -Dsonar.host.url=http://localhost:9000   -Dsonar.login=sqp_293beeee09048bf228799ea36209901a06c3d62d
+
+
+
+
+
+
+node {
+  stage('SCM') {
+    checkout scm
+  }
+  stage('SonarQube Analysis') {
+    def mvn = tool 'Default Maven';
+    withSonarQubeEnv() {
+      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=test_01 -Dsonar.projectName='test_01'"
+    }
+  }
+}
+
+
+
+please update below mentioned file before execution
+
+
+jenkins@controller:/var/opt/sonar/conf$ cat sonar-scanner.properties 
+#Configure here general information about the environment, such as SonarQube server connection details for example
+#No information about specific project should appear here
+
+#----- Default SonarQube server
+sonar.host.url=http://localhost:9000
+
+#----- Default source code encoding
+sonar.sourceEncoding=UTF-8
+
+sonar.projectKey=sample_08
+sonar.projectName=sample_08
+
+sonar.sources=/home/nik/Desktop/k8s/python/python/sonar/sample_04
+#sonar.login=sqp_848e092b48c3460df878c073a8b8dc7a4eb05d25
+sonar.token=sqp_848e092b48c3460df878c073a8b8dc7a4eb05d25
+sonar.verbose=true
+sonar.python.xunit.reportPath=/home/nik/Desktop/k8s/python/python/sonar/python_report/sample_04/result.xml
+sonar.python.coverage.reportPath=/home/nik/Desktop/k8s/python/python/sonar/python_report/sample_04/coverage.xml
+#sonar.inclusions=/home/nik/Desktop/k8s/python/python/sonar/sample_03/tornado_app.py
+sonar.language=python
+sonar.python.version=3.9
+sonar.projectVersion=1.0
+sonar.core.codeCoveragePlugin=cobertura
+sonar.qualitygate.wait=true
+sonar.tests=/home/nik/Desktop/k8s/python/python/sonar/sample_04
+sonar.test.inclusions=tests/*.py, src/*.py
+
+
+
+
+
+
+
+
+#sqp_7b632b0d6318c002ff467a03dec6464cb29a1663
+
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+export SONAR_HOME=/var/opt/sonar
+export SONAR_PATH=$HOME/sonar
+export PATH=$PATH:$SONAR_HOME/bin:$SONAR_PATH/bin
+
+
+
+#export PATH="$PATH:/opt/var/sonar/bin"
+
+
+sonar-scanner \
+  -Dsonar.projectKey=sample_test_01 \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://127.0.0.1:9000 \
+  -Dsonar.token=sqp_c7e87a0f6be4bbe7c40f2bb7cbc88857671d6a0b
+
+
+/opt/maven/bin/mvn clean install sonar:sonar -Dsonar.token=sqp_c7e87a0f6be4bbe7c40f2bb7cbc88857671d6a0b
+
+/opt/maven/bin/mvn clean package
+
+/opt/maven/bin/mvn clean compile test
+
+/opt/maven/bin/mvn clean install sonar:sonar -Dsonar.token=sqp_c7e87a0f6be4bbe7c40f2bb7cbc88857671d6a0b -Dsonar.java.coveragePlugin=jacoco -Dsonar.verbose=true
+git@github.com:nik786/hello-tomcat-project-2.git
+
+
+/opt/maven/bin/mvn clean install sonar:sonar -Dsonar.token=sqp_c7e87a0f6be4bbe7c40f2bb7cbc88857671d6a0b -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml -Dsonar.java.coveragePlugin=jacoco -Dsonar.verbose=true
+
+
+
+
+curl -u admin:**** -s --request GET --url  "http://localhost:9000/api/qualitygates/project_status?projectKey=sample_test_01" 
+
+
